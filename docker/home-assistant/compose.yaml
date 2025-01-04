@@ -1,0 +1,46 @@
+services:
+  home_assistant:
+    container_name: home_assistant
+    image: ghcr.io/home-assistant/home-assistant:stable
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./appdata/home-assistant:/config
+
+  mosquitto:
+    container_name: mosquitto
+    image: eclipse-mosquitto:2
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ}
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./appdata/mosquitto/config:/mosquitto/config
+      - ./appdata/mosquitto/data:/mosquitto/data
+      - ./appdata/mosquitto/log:/mosquitto/log
+      - ./appdata/mosquitto/pwfile:/mosquitto/pwfile
+
+  zigbee2mqtt:
+    container_name: zigbee2mqtt
+    image: koenkk/zigbee2mqtt
+    environment:
+      - TZ=${TZ}
+      - ZIGBEE2MQTT_CONFIG_MQTT_SERVER=${ZIGBEE2MQTT_CONFIG_MQTT_SERVER}
+      - ZIGBEE2MQTT_CONFIG_MQTT_USER=${ZIGBEE2MQTT_CONFIG_MQTT_USER}
+      - ZIGBEE2MQTT_CONFIG_MQTT_PASSWORD=${ZIGBEE2MQTT_CONFIG_MQTT_PASSWORD}
+      - ZIGBEE2MQTT_CONFIG_HOMEASSISTANT_ENABLED=true
+      - ZIGBEE2MQTT_CONFIG_FRONTEND_ENABLED=true
+      - ZIGBEE2MQTT_CONFIG_ADVANCED_LOG_SYMLINK_CURRENT=true
+      - ZIGBEE2MQTT_CONFIG_SERIAL_PORT=${ZIGBEE_USB_DEVICE}
+      - ZIGBEE2MQTT_CONFIG_SERIAL_ADAPTER=zstack
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./appdata/zigbee2mqtt/data:/app/data
+    devices:
+      - ${ZIGBEE_USB_DEVICE}:${ZIGBEE_USB_DEVICE}
+    restart: unless-stopped
+    depends_on:
+      - mosquitto
