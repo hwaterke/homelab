@@ -7,9 +7,9 @@ services:
       - TS_STATE_DIR=/var/lib/tailscale
       - TS_USERSPACE=false
     ports:
-      - '80:80'
-      - '81:81'
-      - '443:443'
+      - "80:80"
+      - "81:81"
+      - "443:443"
     volumes:
       - ./appdata/tailscale:/var/lib/tailscale
     devices:
@@ -19,7 +19,7 @@ services:
       - sys_module
     restart: unless-stopped
   proxy:
-    image: 'docker.io/jc21/nginx-proxy-manager:latest'
+    image: "docker.io/jc21/nginx-proxy-manager:latest"
     restart: unless-stopped
     depends_on:
       - tailscale-proxy

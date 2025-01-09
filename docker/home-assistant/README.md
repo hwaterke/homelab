@@ -3,6 +3,7 @@
 ## Setup
 
 Run
+
 ```
 cp example.env .env
 ```
@@ -25,6 +26,7 @@ exit
 ```
 
 Then, edit `appdata/mosquitto/config/mosquitto.conf`
+
 - Set `allow_anonymous` to false
 - Uncomment the password file
 - `docker compose down`
