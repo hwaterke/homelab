@@ -10,6 +10,7 @@ services:
       - "80:80"
       - "81:81"
       - "443:443"
+      - "1883:1883" # To proxy MQTT traffic using Streams
     volumes:
       - ./appdata/tailscale:/var/lib/tailscale
     devices:
