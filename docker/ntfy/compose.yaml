@@ -1,0 +1,19 @@
+services:
+  ntfy:
+    image: binwiederhier/ntfy
+    container_name: ntfy
+    restart: unless-stopped
+    command:
+      - serve
+    environment:
+      - TZ=${TZ}
+      - NTFY_BASE_URL=${BASE_URL}
+      - NTFY_CACHE_FILE=/var/cache/ntfy/cache.db
+      - NTFY_ATTACHMENT_CACHE_DIR=/var/cache/ntfy/attachments
+      - NTFY_BEHIND_PROXY=true
+      - NTFY_UPSTREAM_BASE_URL=https://ntfy.sh # Required for iOS instant notifications
+    volumes:
+      - ./appdata/ntfy/cache:/var/cache/ntfy
+      - ./appdata/ntfy/etc:/etc/ntfy
+    ports:
+      - 8484:80
