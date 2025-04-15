@@ -1,7 +1,7 @@
 ## Clock
-show_time: false
+show_time: true
 time_format: 24 # 12 or 24
-show_date: false
+show_date: true
 date_format: YYYY/MM/DD
 clock_source: client
 
@@ -27,7 +27,7 @@ album:
 ## appearing in the frame even if they are included in the 'album' list.
 album_order: random # random | newest | oldest
 excluded_albums:
-  - "ALBUM_ID"
+  - "844d083c-db96-4b80-8289-01032de1fb89" # Fail
 
 ## Date range or ranges to display
 date:
@@ -43,14 +43,14 @@ memories: false # show memories
 # date_filter: last-30-days # only applies to people and random assets
 
 ## Experimental
-experimental_album_video: false
+experimental_album_video: true
 
 ## UI
 disable_ui: false # this is just a shortcut for all ui elements (show_time, show_date, show_image_time, show_image_date)
 frameless: false # remove border around image and rounded corners.
 hide_cursor: false # Hide cursor/mouse via CSS.
 font_size: 100 # the base font size as a percentage. OMIT the % character
-background_blur: true # display a blurred version of image as background
+background_blur: false # display a blurred version of image as background
 background_blur_amount: 10 # amount of blur to apply to background image (sigma)
 theme: fade # which theme to use. fade or solid
 layout: single # which layout to use. single | splitview | splitview-landscape | portrait | landscape
@@ -78,7 +78,7 @@ show_person_name: false
 show_person_age: false
 show_image_time: false
 image_time_format: 24 # 12 or 24
-show_image_date: false
+show_image_date: true
 image_date_format: YYYY-MM-DD
 show_image_description: false
 show_image_exif: false
