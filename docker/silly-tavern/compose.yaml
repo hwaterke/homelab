@@ -1,0 +1,13 @@
+services:
+  sillytavern:
+    image: ghcr.io/sillytavern/sillytavern:latest
+    container_name: silly-tavern
+    hostname: sillytavern
+    ports:
+      - "8009:8000"
+    volumes:
+      - "./appdata/config:/home/node/app/config"
+      - "./appdata/data:/home/node/app/data"
+      - "./appdata/plugins:/home/node/app/plugins"
+      - "./appdata/extensions:/home/node/app/public/scripts/extensions/third-party"
+    restart: unless-stopped
