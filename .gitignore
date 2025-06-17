@@ -2,3 +2,5 @@
 
 appdata/
 .env
+restic.env
+backup.env

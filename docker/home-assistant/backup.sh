@@ -33,9 +33,9 @@ docker compose down
 docker run --rm \
     --hostname home-assistant \
     --env-file restic.env \
-    --volume "$(pwd):/data" \
+    --volume "$(pwd):/data:ro" \
     restic/restic:latest \
-    backup /data
+    backup /data --host home-assistant
 
 BACKUP_RESULT=$?
 
@@ -53,6 +53,7 @@ docker run --rm \
     --volume "$(pwd):/data" \
     restic/restic:latest \
     forget \
+    --host home-assistant \
     --prune \
     --keep-last 10 \
     --keep-daily 4 \
