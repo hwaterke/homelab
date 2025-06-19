@@ -1,0 +1,7 @@
+# Thumbnails and previews can be regenerated
+/data/appdata/library/thumbs
+/data/appdata/library/encoded-video
+# The database is backed up, no need to backup its backups
+/data/appdata/library/backups
+# This is a bind mount from the NAS, no need to backup
+/data/appdata/library/upload
