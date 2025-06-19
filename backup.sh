@@ -107,9 +107,9 @@ backup_folder() {
 
         # Notify of the result
         if [ "$BACKUP_RESULT" -eq 0 ]; then
-            notify_webhook "$BACKUP_SUCCESS_WEBHOOK_URL"
+            notify_webhook "${BACKUP_SUCCESS_WEBHOOK_URL:-}"
         else
-            notify_webhook "$BACKUP_FAILURE_WEBHOOK_URL"
+            notify_webhook "${BACKUP_FAILURE_WEBHOOK_URL:-}"
         fi
 
         if [ "$BACKUP_RESULT" -ne 0 ]; then
@@ -135,9 +135,9 @@ backup_folder() {
 
         # Notify of the result
         if [ "$FORGET_RESULT" -eq 0 ]; then
-            notify_webhook "$FORGET_SUCCESS_WEBHOOK_URL"
+            notify_webhook "${FORGET_SUCCESS_WEBHOOK_URL:-}"
         else
-            notify_webhook "$FORGET_FAILURE_WEBHOOK_URL"
+            notify_webhook "${FORGET_FAILURE_WEBHOOK_URL:-}"
         fi
 
         # Check the status of the backup
@@ -151,9 +151,9 @@ backup_folder() {
 
         # Notify of the result
         if [ "$CHECK_RESULT" -eq 0 ]; then
-            notify_webhook "$CHECK_SUCCESS_WEBHOOK_URL"
+            notify_webhook "${CHECK_SUCCESS_WEBHOOK_URL:-}"
         else
-            notify_webhook "$CHECK_FAILURE_WEBHOOK_URL"
+            notify_webhook "${CHECK_FAILURE_WEBHOOK_URL:-}"
         fi
 
         echo "Backup of '$folder_path' completed successfully."
