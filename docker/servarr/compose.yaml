@@ -64,22 +64,6 @@ services:
       start_period: 20s
       timeout: 10s
 
-  nzbget:
-    image: lscr.io/linuxserver/nzbget:latest
-    container_name: nzbget
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=${TZ}
-      - NZBGET_USER=${NZBGET_USER}
-      - NZBGET_PASS=${NZBGET_PASS}
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - ./appdata//nzbget:/config
-      - ${MEDIA_PATH}/downloads/nzbget:/data
-    restart: unless-stopped
-    network_mode: service:gluetun
-
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
@@ -123,21 +107,6 @@ services:
     ports:
       - 7878:7878
 
-  lidarr:
-    container_name: lidarr
-    image: lscr.io/linuxserver/lidarr:latest
-    restart: unless-stopped
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - ./appdata/lidarr:/config
-      - ${MEDIA_PATH}:/data
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=${TZ}
-    ports:
-      - 8686:8686
-
   bazarr:
     image: lscr.io/linuxserver/bazarr:latest
     container_name: bazarr
@@ -152,21 +121,6 @@ services:
       - ${MEDIA_PATH}:/data
     ports:
       - 6767:6767
-
-  readarr:
-    image: lscr.io/linuxserver/readarr:develop
-    container_name: readarr
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=${TZ}
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - ./appdata/readarr:/config
-      - ${MEDIA_PATH}:/data
-    ports:
-      - 8787:8787
-    restart: unless-stopped
 
   jellyseerr:
     image: fallenbagel/jellyseerr:latest
