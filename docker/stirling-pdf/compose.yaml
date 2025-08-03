@@ -1,0 +1,14 @@
+services:
+  stirling-pdf:
+    image: docker.stirlingpdf.com/stirlingtools/stirling-pdf:latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./appdata/stirling-pdf/training-data:/usr/share/tessdata
+      - ./appdata/stirling-pdf/extra-configs:/configs
+      - ./appdata/stirling-pdf/custom-files:/customFiles/
+      - ./appdata/stirling-pdf/logs:/logs/
+      - ./appdata/stirling-pdf/pipeline:/pipeline/
+    environment:
+      - DOCKER_ENABLE_SECURITY=false
+      - LANGS=en_GB
