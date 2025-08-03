@@ -1,4 +1,4 @@
-# Hone Assistant
+# Home Assistant
 
 ## Setup
 
