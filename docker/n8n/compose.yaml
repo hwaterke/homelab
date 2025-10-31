@@ -12,6 +12,8 @@ services:
       - NODE_ENV=production
       - WEBHOOK_URL=https://${DOMAIN}/
       - GENERIC_TIMEZONE=${TZ}
+      - NODE_FUNCTION_ALLOW_BUILTIN=*
+      - NODE_FUNCTION_ALLOW_EXTERNAL=*
     volumes:
       - ./appdata/n8n_data:/home/node/.n8n
       - ./appdata/shared:/shared
@@ -24,3 +26,18 @@ services:
       - 6333:6333
     volumes:
       - ./appdata/qdrant_storage:/qdrant/storage
+
+  playwright-chrome:
+    hostname: playwright-chrome
+    image: ghcr.io/browserless/chrome
+    restart: unless-stopped
+    environment:
+      - TOKEN=YOUR_PLAYWRIGHT_TOKEN
+      - SCREEN_WIDTH=1920
+      - SCREEN_HEIGHT=1024
+      - SCREEN_DEPTH=16
+      - ENABLE_DEBUGGER=true
+      - TIMEOUT=600000
+      - CONCURRENT=15
+    ports:
+      - 20450:3000 # Port mapping for Playwright WebSocket connection
