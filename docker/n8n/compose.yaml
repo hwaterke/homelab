@@ -29,7 +29,7 @@ services:
 
   playwright-chrome:
     hostname: playwright-chrome
-    image: ghcr.io/browserless/chrome
+    image: ghcr.io/browserless/chromium
     restart: unless-stopped
     environment:
       - TOKEN=YOUR_PLAYWRIGHT_TOKEN
