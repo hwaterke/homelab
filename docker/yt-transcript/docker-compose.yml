@@ -1,0 +1,15 @@
+services:
+  transcript-api:
+    image: ghcr.io/hwaterke/yt-transcript:latest
+    ports:
+      - "8019:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - REDIS_HOST=redis
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
