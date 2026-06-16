@@ -57,7 +57,38 @@ services:
       POSTGRES_INITDB_ARGS: "--data-checksums"
     volumes:
       - ${DB_DATA_LOCATION}:/var/lib/postgresql/data
+    # Temporarily exposed for local development of Immich Blacksmith
+    ports:
+      - "5432:5432"
     shm_size: 128mb
+    restart: always
+
+  immich-blacksmith:
+    container_name: immich_blacksmith
+    image: ghcr.io/hwaterke/immich-blacksmith:latest
+    environment:
+      DB_HOST: database
+      DB_PORT: 5432
+      DB_NAME: ${DB_DATABASE_NAME}
+      DB_USER: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      IMMICH_URL: http://immich-server:2283/api
+      MACHINE_LEARNING_URL: http://immich-machine-learning:3003
+      IMMICH_API_KEY: ${IMMICH_API_KEY}
+      COMFYUI_URL: ${COMFYUI_URL}
+      COMFYUI_WORKFLOWS_DIR: /comfy-workflows
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./appdata/comfy-workflows:/comfy-workflows
+      # Mount the same media Immich sees so Blacksmith can run exiftool on it.
+      # Easiest: mount it at the identical path Immich uses (no translation needed).
+      - ${UPLOAD_LOCATION}:/data
+      - /photos-archive:/photos-archive:ro
+    ports:
+      - 3001:3000
+    depends_on:
+      - database
+      - immich-server
     restart: always
 
 volumes:
