@@ -65,7 +65,7 @@ services:
 
   immich-blacksmith:
     container_name: immich_blacksmith
-    image: ghcr.io/hwaterke/immich-blacksmith:latest
+    image: ghcr.io/hwaterke/owl-immich:latest
     environment:
       DB_HOST: database
       DB_PORT: 5432
