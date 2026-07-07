@@ -79,7 +79,7 @@ services:
       COMFYUI_WORKFLOWS_DIR: /comfy-workflows
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ./appdata/comfy-workflows:/comfy-workflows
+      - ./appdata/blacksmith-data:/blacksmith-data
       # Mount the same media Immich sees so Blacksmith can run exiftool on it.
       # Easiest: mount it at the identical path Immich uses (no translation needed).
       - ${UPLOAD_LOCATION}:/data
