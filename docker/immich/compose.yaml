@@ -66,6 +66,12 @@ services:
   immich-blacksmith:
     container_name: immich_blacksmith
     image: ghcr.io/hwaterke/owl-immich:latest
+    # Blacksmith-only secrets/config (kept out of .env, which is env_file'd
+    # into the Immich containers). Optional so the stack still boots before
+    # the file exists — Blacksmith then runs with auth DISABLED (boot warning).
+    env_file:
+      - path: blacksmith.env
+        required: false
     environment:
       DB_HOST: database
       DB_PORT: 5432
@@ -74,8 +80,6 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       IMMICH_URL: http://immich-server:2283/api
       MACHINE_LEARNING_URL: http://immich-machine-learning:3003
-      IMMICH_API_KEY: ${IMMICH_API_KEY}
-      COMFYUI_URL: ${COMFYUI_URL}
       COMFYUI_WORKFLOWS_DIR: /comfy-workflows
     volumes:
       - /etc/localtime:/etc/localtime:ro
