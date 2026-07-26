@@ -4,3 +4,4 @@ appdata/
 .env
 restic.env
 backup.env
+blacksmith.env
