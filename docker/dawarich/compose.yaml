@@ -1,5 +1,8 @@
 # full list of environment variables with descriptions can be found in the documentation:
 # https://dawarich.app/docs/self-hosting/environment-variables/
+#
+# Persistent data lives under ./appdata (bind mounts, gitignored) so it can be
+# inspected/backed up like the other services in this homelab.
 
 networks:
   dawarich:
@@ -16,10 +19,10 @@ services:
     networks:
       - dawarich
     volumes:
-      - dawarich_shared:/data
-    restart: always
+      - ./appdata/shared:/data
+    restart: unless-stopped
     healthcheck:
-      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
       interval: 10s
       retries: 5
       start_period: 30s
@@ -31,17 +34,21 @@ services:
     shm_size: 1G
     container_name: dawarich_db
     volumes:
-      - dawarich_db_data:/var/lib/postgresql/data
-      - dawarich_shared:/var/shared
+      - ./appdata/db:/var/lib/postgresql/data
+      - ./appdata/shared:/var/shared
     networks:
       - dawarich
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
       POSTGRES_DB: ${POSTGRES_DB:-dawarich_development}
-    restart: always
+    restart: unless-stopped
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-dawarich_development}" ]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-dawarich_development}",
+        ]
       interval: 10s
       retries: 5
       start_period: 30s
@@ -52,19 +59,19 @@ services:
     image: freikin/dawarich:latest
     container_name: dawarich_app
     volumes:
-      - dawarich_public:/var/app/public
-      - dawarich_watched:/var/app/tmp/imports/watched
-      - dawarich_storage:/var/app/storage
-      - dawarich_db_data:/dawarich_db_data
+      - ./appdata/public:/var/app/public
+      - ./appdata/watched:/var/app/tmp/imports/watched
+      - ./appdata/storage:/var/app/storage
+      - ./appdata/db:/dawarich_db_data
     networks:
       - dawarich
     ports:
-      - "${DAWARICH_APP_PORT:-3000}:3000"
+      - "${DAWARICH_APP_PORT}:3000"
     stdin_open: true
     tty: true
     entrypoint: web-entrypoint.sh
-    command: ['bin/rails', 'server', '-p', '3000', '-b', '::']
-    restart: on-failure
+    command: ["bin/rails", "server", "-p", "3000", "-b", "::"]
+    restart: unless-stopped
     environment:
       RAILS_ENV: ${RAILS_ENV:-production}
       ### To run under a non-root user, set PUID/PGID here (do NOT use `user:`).
@@ -77,7 +84,7 @@ services:
       DATABASE_PASSWORD: ${DATABASE_PASSWORD:-password}
       DATABASE_NAME: ${DATABASE_NAME:-dawarich_development}
       APPLICATION_HOSTS: ${APPLICATION_HOSTS:-localhost,::1,127.0.0.1}
-      TIME_ZONE: ${TIME_ZONE:-Europe/London}
+      TIME_ZONE: ${TIME_ZONE}
       APPLICATION_PROTOCOL: ${APPLICATION_PROTOCOL:-http}
       PROMETHEUS_EXPORTER_ENABLED: ${PROMETHEUS_EXPORTER_ENABLED:-false}
       SECRET_KEY_BASE: ${SECRET_KEY_BASE:-"CHANGE_ME"}
@@ -94,7 +101,11 @@ services:
         max-size: ${LOG_MAX_SIZE:-100m}
         max-file: ${LOG_MAX_FILE:-5}
     healthcheck:
-      test: [ "CMD-SHELL", "wget -qO - http://127.0.0.1:3000/api/v1/health | grep -q '\"status\"\\s*:\\s*\"ok\"'" ]
+      test:
+        [
+          "CMD-SHELL",
+          "wget -qO - http://127.0.0.1:3000/api/v1/health | grep -q '\"status\"\\s*:\\s*\"ok\"'",
+        ]
       interval: 10s
       retries: 30
       start_period: 30s
@@ -116,16 +127,16 @@ services:
     image: freikin/dawarich:latest
     container_name: dawarich_sidekiq
     volumes:
-      - dawarich_public:/var/app/public
-      - dawarich_watched:/var/app/tmp/imports/watched
-      - dawarich_storage:/var/app/storage
+      - ./appdata/public:/var/app/public
+      - ./appdata/watched:/var/app/tmp/imports/watched
+      - ./appdata/storage:/var/app/storage
     networks:
       - dawarich
     stdin_open: true
     tty: true
     entrypoint: sidekiq-entrypoint.sh
-    command: ['sidekiq']
-    restart: on-failure
+    command: ["sidekiq"]
+    restart: unless-stopped
     environment:
       RAILS_ENV: ${RAILS_ENV:-production}
       ### To run under a non-root user, set PUID/PGID here (do NOT use `user:`).
@@ -155,7 +166,7 @@ services:
         max-size: ${LOG_MAX_SIZE:-100m}
         max-file: ${LOG_MAX_FILE:-5}
     healthcheck:
-      test: [ "CMD-SHELL", "pgrep -f sidekiq" ]
+      test: ["CMD-SHELL", "pgrep -f sidekiq"]
       interval: 10s
       retries: 30
       start_period: 30s
@@ -170,10 +181,3 @@ services:
       dawarich_app:
         condition: service_healthy
         restart: true
-
-volumes:
-  dawarich_db_data:
-  dawarich_shared:
-  dawarich_public:
-  dawarich_watched:
-  dawarich_storage:
