@@ -1,0 +1,14 @@
+services:
+  monizze:
+    image: ghcr.io/hwaterke/monizze-transaction-exporter:latest
+    container_name: monizze
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Brussels
+    volumes:
+      # Exports, flags, the stored token and the hand-edited budget config.
+      # Must be writable by uid 1000 (the image's `node` user):
+      #   mkdir -p appdata/monizze/data && sudo chown -R 1000:1000 appdata/monizze
+      - ./appdata/monizze/data:/app/data
+    ports:
+      - 8787:8787
