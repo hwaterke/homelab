@@ -38,7 +38,9 @@ services:
       - redisdata:/data
 
   webserver:
-    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    # Pinned for controlled upgrades. v3 has breaking changes, see
+    # https://docs.paperless-ngx.com/migration-v3/
+    image: ghcr.io/paperless-ngx/paperless-ngx:3.0.5
     restart: unless-stopped
     depends_on:
       - broker
@@ -53,7 +55,13 @@ services:
       - $CONSUME_LOCATION:/usr/src/paperless/consume
     env_file: docker-compose.env
     environment:
+      # Required since v3, paperless refuses to start without it.
+      # Kept out of git, set it in .env (see example.env).
+      PAPERLESS_SECRET_KEY: ${PAPERLESS_SECRET_KEY:?set PAPERLESS_SECRET_KEY in .env}
+      # Optional, empty is treated the same as unset by paperless.
+      PAPERLESS_URL: ${PAPERLESS_URL:-}
       PAPERLESS_REDIS: redis://broker:6379
+      PAPERLESS_DBENGINE: sqlite
       PAPERLESS_TIKA_ENABLED: 1
       PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://gotenberg:3000
       PAPERLESS_TIKA_ENDPOINT: http://tika:9998
@@ -61,7 +69,7 @@ services:
       PAPERLESS_OCR_LANGUAGES: nld
 
   gotenberg:
-    image: docker.io/gotenberg/gotenberg:8.7
+    image: docker.io/gotenberg/gotenberg:8.34
     restart: unless-stopped
 
     # The gotenberg chromium route is used to convert .eml files. We do not
