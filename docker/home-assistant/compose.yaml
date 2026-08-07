@@ -33,14 +33,22 @@ services:
       - ZIGBEE2MQTT_CONFIG_HOMEASSISTANT_ENABLED=true
       - ZIGBEE2MQTT_CONFIG_FRONTEND_ENABLED=true
       - ZIGBEE2MQTT_CONFIG_ADVANCED_LOG_SYMLINK_CURRENT=true
-      - ZIGBEE2MQTT_CONFIG_SERIAL_PORT=${ZIGBEE_USB_DEVICE}
-      - ZIGBEE2MQTT_CONFIG_SERIAL_ADAPTER=zstack
+      # Pinned Zigbee network identity. Without these Zigbee2MQTT falls back to its
+      # defaults and can form a *new* network instead of resuming the existing one.
+      # In particular ext_pan_id defaults to [221 x 8]; on the ember adapter that is
+      # used literally and would orphan every paired device.
+      # Kept in .env: ext_pan_id is the coordinator IEEE and the network key is secret.
+      # Decimal only - Zigbee2MQTT JSON-parses these env vars, so 0x.. literals are rejected.
+      - ZIGBEE2MQTT_CONFIG_ADVANCED_CHANNEL=${ZIGBEE_CHANNEL}
+      - ZIGBEE2MQTT_CONFIG_ADVANCED_PAN_ID=${ZIGBEE_PAN_ID}
+      - ZIGBEE2MQTT_CONFIG_ADVANCED_EXT_PAN_ID=${ZIGBEE_EXT_PAN_ID}
+      - ZIGBEE2MQTT_CONFIG_ADVANCED_NETWORK_KEY=${ZIGBEE_NETWORK_KEY}
+      - ZIGBEE2MQTT_CONFIG_SERIAL_PORT=${ZIGBEE_COORDINATOR}
+      - ZIGBEE2MQTT_CONFIG_SERIAL_ADAPTER=ember
     ports:
       - "8080:8080"
     volumes:
       - ./appdata/zigbee2mqtt/data:/app/data
-    devices:
-      - ${ZIGBEE_USB_DEVICE}:${ZIGBEE_USB_DEVICE}
     restart: unless-stopped
     depends_on:
       - mosquitto
