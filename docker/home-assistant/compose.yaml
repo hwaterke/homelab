@@ -3,6 +3,9 @@ services:
     container_name: home_assistant
     image: ghcr.io/home-assistant/home-assistant:stable
     restart: unless-stopped
+    # HA needs more than the default 10s to shut down cleanly (recorder flush,
+    # integrations unloading); without this it gets SIGKILLed mid-shutdown.
+    stop_grace_period: 60s
     network_mode: host
     volumes:
       - /etc/localtime:/etc/localtime:ro
