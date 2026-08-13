@@ -1,0 +1,7 @@
+# Written to while the stack runs. backup.pre.sh puts a consistent copy of it in
+# db-snapshot, which is what the snapshot actually contains.
+/data/appdata/home-assistant/home-assistant_v2.db
+/data/appdata/home-assistant/home-assistant_v2.db-wal
+/data/appdata/home-assistant/home-assistant_v2.db-shm
+# Print media cached by the Bambu Lab integration, not configuration or history
+/data/appdata/home-assistant/www/media/ha-bambulab

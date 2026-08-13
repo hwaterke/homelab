@@ -1,0 +1,3 @@
+# Stopping this stack to back it up would also cycle mosquitto and zigbee2mqtt,
+# which have nothing to do with the file that needs quiescing. backup.pre.sh
+# takes a consistent copy of that file instead.

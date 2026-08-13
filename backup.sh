@@ -42,6 +42,12 @@ stop_compose_stack() {
     export LAST_COMPOSE_WAS_RUNNING="$was_running"
 }
 
+restore_compose_stack() {
+    if [[ "${LAST_COMPOSE_WAS_RUNNING:-}" == "true" ]]; then
+        docker compose up -d
+    fi
+}
+
 backup_folder() {
     local -r folder_path="$1"
 
@@ -77,7 +83,30 @@ backup_folder() {
         # Pull the latest restic image
         docker pull restic/restic:latest
 
-        stop_compose_stack
+        # A stack that can be copied while it runs opts out of the stop/start
+        # cycle by dropping a backup.nostop file next to its compose file.
+        if [ -f "backup.nostop" ]; then
+            echo "backup.nostop found, leaving the stack running"
+        else
+            stop_compose_stack
+        fi
+
+        # Per-stack hook, for whatever a hot copy needs to be consistent.
+        # It runs after the stop so a stopping stack gets a quiesced view too.
+        if [ -x "backup.pre.sh" ]; then
+            echo "Running backup.pre.sh..."
+            set +e
+            ./backup.pre.sh
+            PRE_RESULT=$?
+            set -e
+
+            if [ "$PRE_RESULT" -ne 0 ]; then
+                echo "backup.pre.sh failed, nothing was backed up"
+                restore_compose_stack
+                notify_webhook "${BACKUP_FAILURE_WEBHOOK_URL:-}"
+                exit 1
+            fi
+        fi
 
         echo "Starting restic backup..."
         if [ -f "restic.include" ]; then
@@ -101,9 +130,7 @@ backup_folder() {
             "${BACKUP_CMD[@]}"
         BACKUP_RESULT=$?
 
-        if [[ -n "${LAST_COMPOSE_WAS_RUNNING:-}" && "$LAST_COMPOSE_WAS_RUNNING" == "true" ]]; then
-            docker compose up -d
-        fi
+        restore_compose_stack
 
         # Notify of the result
         if [ "$BACKUP_RESULT" -eq 0 ]; then
