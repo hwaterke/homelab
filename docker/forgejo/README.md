@@ -76,7 +76,8 @@ Everything is under `appdata/forgejo/`, which is what the backup snapshots:
   believing it.
 - `gitea/conf/app.ini` — configuration. The directory is named `gitea` for
   compatibility; `GITEA_CUSTOM` is baked into the image.
-- `gitea/` — also holds the SQLite database.
+- `gitea/gitea.db` — the SQLite database. Named `gitea` for the same compatibility
+  reason as the directory.
 
 Repositories copied in by hand appear under Site Administration → Repositories →
 Unadopted, and are adopted from there. Adoption indexes them in place; it does

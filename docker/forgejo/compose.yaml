@@ -10,10 +10,11 @@ services:
       # Every link, redirect and displayed clone URL is built from ROOT_URL, so it
       # names the proxy rather than the container. https and no port: leaving the
       # internal http://...:3000 here redirects the login page out of TLS.
-      # SSH_DOMAIN is not set: it defaults to DOMAIN, which is the point of using one
-      # name for web and git alike.
       - FORGEJO__server__ROOT_URL=https://${GIT_DOMAIN}/
       - FORGEJO__server__DOMAIN=${GIT_DOMAIN}
+      # Set explicitly: the generated app.ini writes SSH_DOMAIN = localhost rather than
+      # inheriting DOMAIN, and it is the host shown in every SSH clone URL.
+      - FORGEJO__server__SSH_DOMAIN=${GIT_DOMAIN}
       # The built-in Go SSH server, so the container needs no sshd of its own.
       - FORGEJO__server__START_SSH_SERVER=true
       # SSH_PORT is the port advertised in clone URLs; SSH_LISTEN_PORT is the one the
