@@ -29,7 +29,10 @@ fi
 # A stale WAL from an earlier cold copy would be replayed into this one
 rm -f appdata/home-assistant/db-snapshot/home-assistant_v2.db-wal
 
-docker exec home_assistant python - <<'PY'
+# -i matters: without it the heredoc is never attached to python's stdin, which
+# runs an empty program and exits 0 - a snapshot that was never taken, reported
+# as a success.
+docker exec -i home_assistant python - <<'PY'
 import sqlite3
 
 source = sqlite3.connect("/config/home-assistant_v2.db")
@@ -46,3 +49,18 @@ if result != "ok":
 target.close()
 source.close()
 PY
+
+# The database is excluded from the snapshot in favour of this copy, so a hook
+# that produces nothing and still exits 0 would back up a stack without its
+# database. Fail here rather than let restic record that as a success.
+snapshot=appdata/home-assistant/db-snapshot/home-assistant_v2.db
+if [ ! -s "$snapshot" ]; then
+    echo "no database snapshot at $snapshot"
+    exit 1
+fi
+if [ -n "$(find "$snapshot" -mmin +10)" ]; then
+    echo "database snapshot at $snapshot was not refreshed by this run"
+    exit 1
+fi
+
+echo "Database snapshot: $(du -h "$snapshot" | cut -f1)"
