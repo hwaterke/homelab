@@ -1,0 +1,44 @@
+services:
+  forgejo:
+    image: codeberg.org/forgejo/forgejo:16
+    container_name: forgejo
+    restart: unless-stopped
+    environment:
+      # Must match the owner of ./appdata/forgejo, or the container will not start.
+      - USER_UID=1000
+      - USER_GID=1000
+      # Every link, redirect and displayed clone URL is built from ROOT_URL, so it
+      # names the proxy rather than the container. https and no port: leaving the
+      # internal http://...:3000 here redirects the login page out of TLS.
+      # SSH_DOMAIN is not set: it defaults to DOMAIN, which is the point of using one
+      # name for web and git alike.
+      - FORGEJO__server__ROOT_URL=https://${GIT_DOMAIN}/
+      - FORGEJO__server__DOMAIN=${GIT_DOMAIN}
+      # The built-in Go SSH server, so the container needs no sshd of its own.
+      - FORGEJO__server__START_SSH_SERVER=true
+      # SSH_PORT is the port advertised in clone URLs; SSH_LISTEN_PORT is the one the
+      # server binds inside the container. Pinning both to the same value keeps the
+      # published port a straight 2222:2222 map with no translation anywhere.
+      - FORGEJO__server__SSH_PORT=2222
+      - FORGEJO__server__SSH_LISTEN_PORT=2222
+      - FORGEJO__database__DB_TYPE=sqlite3
+      # A single user, created in the setup page on first start. Registration stays
+      # off so no second account can ever be created from the web.
+      - FORGEJO__service__DISABLE_REGISTRATION=true
+      # Push-to-create: pushing to a URL that does not exist yet creates the
+      # repository, private, without visiting the web UI first.
+      - FORGEJO__repository__ENABLE_PUSH_CREATE_USER=true
+      - FORGEJO__repository__DEFAULT_PUSH_CREATE_PRIVATE=true
+      - FORGEJO__repository__DEFAULT_PRIVATE=private
+      # Code search is the one feature that makes memory and disk grow with the
+      # content of the repositories, and nothing here searches code.
+      - FORGEJO__indexer__REPO_INDEXER_ENABLED=false
+    ports:
+      - "3000:3000"
+      - "2222:2222"
+    volumes:
+      # A bind mount, never a named volume: the backup snapshots this stack folder,
+      # so a named volume would sit outside every snapshot while the job still
+      # reported success.
+      - ./appdata/forgejo:/data
+      - /etc/localtime:/etc/localtime:ro
