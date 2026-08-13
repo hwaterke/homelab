@@ -11,6 +11,7 @@ services:
       - "81:81"
       - "443:443"
       - "1883:1883" # To proxy MQTT traffic using Streams
+      - "2222:2222" # To proxy git SSH traffic using Streams
     volumes:
       - ./appdata/tailscale:/var/lib/tailscale
     devices:
