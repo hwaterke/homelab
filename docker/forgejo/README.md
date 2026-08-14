@@ -1,7 +1,15 @@
 # Forgejo
 
 A private git origin for repositories that must not live on GitHub.
-Deliberately small: no issues, no pull requests, no Actions runner, one user.
+Deliberately small: one user, and the forge features that are not about storing
+code are switched off in `compose.yaml` — issue tracking and milestones, wikis,
+projects, stars and forks. They are disabled globally, so no repository can turn
+them back on. **Code** and **Releases** are the two units Forgejo does not let
+you deactivate; the Releases tab stays regardless.
+
+Pull requests, Actions and the package registry are left enabled. Actions needs
+a runner registered against the instance before any workflow runs; there is none
+in this stack yet, so jobs would queue rather than execute.
 
 # Setup
 

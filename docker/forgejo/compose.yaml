@@ -31,6 +31,35 @@ services:
       - FORGEJO__repository__ENABLE_PUSH_CREATE_USER=true
       - FORGEJO__repository__DEFAULT_PUSH_CREATE_PRIVATE=true
       - FORGEJO__repository__DEFAULT_PRIVATE=private
+      # Issue tracking, wikis and projects are the forge features this instance does
+      # not use. DISABLED_REPO_UNITS is global and cannot be overridden per
+      # repository, so the tabs disappear everywhere and cannot be switched back on
+      # by accident. Code and Releases are the two units the setting refuses — they
+      # cannot be deactivated. Pull requests, Actions and the package registry stay:
+      # reviewing a branch, running CI and having somewhere for CI to publish are
+      # worth keeping available. Milestones belong to the issues unit and go with it.
+      - FORGEJO__repository__DISABLED_REPO_UNITS=repo.issues,repo.ext_issues,repo.wiki,repo.ext_wiki,repo.projects
+      - FORGEJO__repository__DEFAULT_REPO_UNITS=repo.code,repo.releases,repo.pulls,repo.actions,repo.packages
+      # Both are issues features with nothing left to attach to. The milestones
+      # dashboard is instance-wide rather than a repo unit, so disabling the unit
+      # empties the page but leaves it linked from the navbar.
+      - FORGEJO__service__DEFAULT_ENABLE_TIMETRACKING=false
+      - FORGEJO__service__SHOW_MILESTONES_DASHBOARD_PAGE=false
+      # The social half of a forge: nobody to share with on a single-user instance.
+      # Pull requests do not need forks — they are opened from a branch.
+      - FORGEJO__repository__DISABLE_STARS=true
+      - FORGEJO__repository__DISABLE_FORKS=true
+      - FORGEJO__service__ENABLE_USER_HEATMAP=false
+      - FORGEJO__service__DEFAULT_ALLOW_CREATE_ORGANIZATION=false
+      # Explore lists users, organisations and code across the instance. One user,
+      # no organisations, and the code tab needs the repository indexer.
+      - FORGEJO__service_0X2E_explore__DISABLE_USERS_PAGE=true
+      - FORGEJO__service_0X2E_explore__DISABLE_ORGANIZATIONS_PAGE=true
+      - FORGEJO__service_0X2E_explore__DISABLE_CODE_PAGE=true
+      # An OpenID button on a login page that only one local account can use.
+      - FORGEJO__openid__ENABLE_OPENID_SIGNIN=false
+      # The only thing in the stack that talks to the internet on its own.
+      - FORGEJO__cron_0X2E_update_checker__ENABLED=false
       # Code search is the one feature that makes memory and disk grow with the
       # content of the repositories, and nothing here searches code.
       - FORGEJO__indexer__REPO_INDEXER_ENABLED=false
