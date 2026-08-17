@@ -25,6 +25,16 @@ services:
       - ./appdata/mosquitto/log:/mosquitto/log
       - ./appdata/mosquitto/pwfile:/mosquitto/pwfile
 
+  matter-server:
+    container_name: matter-server
+    image: ghcr.io/home-assistant-libs/python-matter-server:stable
+    restart: unless-stopped
+    # Matter needs IPv6 and mDNS on the LAN to reach Thread nodes through the
+    # border router; bridged networking would break both.
+    network_mode: host
+    volumes:
+      - ./appdata/matter-server:/data
+
   zigbee2mqtt:
     container_name: zigbee2mqtt
     image: koenkk/zigbee2mqtt
