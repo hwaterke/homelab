@@ -80,7 +80,6 @@ services:
       - "--chromium-allow-list=file:///tmp/.*"
 
   tika:
-    # Pinned to the version paperless upstream pins, so tika cannot drift.
     image: docker.io/apache/tika:3.3.1.0
     restart: unless-stopped
 
