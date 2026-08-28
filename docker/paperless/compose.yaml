@@ -40,7 +40,7 @@ services:
   webserver:
     # Pinned for controlled upgrades. v3 has breaking changes, see
     # https://docs.paperless-ngx.com/migration-v3/
-    image: ghcr.io/paperless-ngx/paperless-ngx:3.0.5
+    image: ghcr.io/paperless-ngx/paperless-ngx:3.1.0
     restart: unless-stopped
     depends_on:
       - broker
@@ -80,7 +80,8 @@ services:
       - "--chromium-allow-list=file:///tmp/.*"
 
   tika:
-    image: docker.io/apache/tika:latest
+    # Pinned to the version paperless upstream pins, so tika cannot drift.
+    image: docker.io/apache/tika:3.3.1.0
     restart: unless-stopped
 
 volumes:
