@@ -7,13 +7,16 @@ services:
       # Must match the owner of ./appdata/forgejo, or the container will not start.
       - USER_UID=1000
       - USER_GID=1000
-      # Every link, redirect and displayed clone URL is built from ROOT_URL, so it
-      # names the proxy rather than the container. https and no port: leaving the
-      # internal http://...:3000 here redirects the login page out of TLS.
-      - FORGEJO__server__ROOT_URL=https://${GIT_DOMAIN}/
+      # Every link, redirect and displayed HTTPS clone URL is built from ROOT_URL, and
+      # the container registry derives its token authentication realm from it too, so
+      # it names the LAN host every machine can reach rather than the container or a
+      # name that only resolves from outside. https and no port: leaving the internal
+      # http://...:3000 here redirects the login page out of TLS.
+      - FORGEJO__server__ROOT_URL=https://${WEB_DOMAIN}/
       - FORGEJO__server__DOMAIN=${GIT_DOMAIN}
       # Set explicitly: the generated app.ini writes SSH_DOMAIN = localhost rather than
-      # inheriting DOMAIN, and it is the host shown in every SSH clone URL.
+      # inheriting DOMAIN, and it is the host shown in every SSH clone URL. It keeps the
+      # canonical name while ROOT_URL takes the LAN one, so no SSH clone URL changes.
       - FORGEJO__server__SSH_DOMAIN=${GIT_DOMAIN}
       # The built-in Go SSH server, so the container needs no sshd of its own.
       - FORGEJO__server__START_SSH_SERVER=true

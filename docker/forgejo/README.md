@@ -19,8 +19,16 @@ in this stack yet, so jobs would queue rather than execute.
 cp example.env .env
 ```
 
-Set `GIT_DOMAIN` to the hostname the reverse proxy serves. It is the name in
-every clone URL, for both HTTPS and SSH.
+Two hostnames, both served by the reverse proxy. They may be the same name;
+splitting them keeps the forge reachable from outside while the registry stays
+usable from inside.
+
+- `GIT_DOMAIN` — the canonical name. It is the host in every SSH clone URL, and
+  the name the web UI is reached by from outside the LAN.
+- `WEB_DOMAIN` — the LAN name. Every link, redirect and HTTPS clone URL Forgejo
+  writes is built from it, and the container registry derives its token
+  authentication realm from it, so a registry client can only log in, push or
+  pull under this name. It must resolve on every machine that pulls an image.
 
 ## 2. Create the data directory
 
