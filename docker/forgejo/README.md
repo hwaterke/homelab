@@ -7,9 +7,11 @@ projects, stars and forks. They are disabled globally, so no repository can turn
 them back on. **Code** and **Releases** are the two units Forgejo does not let
 you deactivate; the Releases tab stays regardless.
 
-Pull requests, Actions and the package registry are left enabled. Actions needs
-a runner registered against the instance before any workflow runs; there is none
-in this stack yet, so jobs would queue rather than execute.
+Pull requests, Actions and the package registry are left enabled. A runner is
+registered **globally** against the instance, so any repository here may run
+workflows. The runner itself lives outside this stack, on its own host — nothing
+in this compose file starts or configures it. The package registry is where the
+images those workflows build are pushed to and pulled from.
 
 # Setup
 
