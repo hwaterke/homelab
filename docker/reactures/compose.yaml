@@ -1,0 +1,9 @@
+services:
+  reactures:
+    # Built and pushed by CI, never built here. REACTURES_TAG overrides the tag to
+    # roll back to an earlier build; leaving it unset follows the newest one.
+    image: ${REGISTRY}/harold/reactures:${REACTURES_TAG:-latest}
+    container_name: reactures
+    restart: unless-stopped
+    ports:
+      - "8080:80"
