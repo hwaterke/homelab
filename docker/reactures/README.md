@@ -27,9 +27,9 @@ The image is public, so no `docker login` is needed to pull it.
 # Deploying
 
 `deploy.sh` is the whole deploy: pull, restart, show the result, then fetch the
-site and fail if it does not answer. It is what CI runs, and it takes no
-arguments — the key CI connects with is bound to this script as a forced command,
-so nothing else can be run over that connection.
+site and fail if it does not answer. It is what CI runs, as `deploy reactures`:
+the key CI connects with is bound to `../deploy-dispatch.sh` as a forced command,
+which runs a stack's `deploy.sh` and nothing else.
 
 Run it by hand the same way:
 
