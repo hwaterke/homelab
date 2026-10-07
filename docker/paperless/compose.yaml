@@ -32,10 +32,10 @@
 
 services:
   broker:
-    image: docker.io/library/redis:8
+    image: docker.io/valkey/valkey:9-alpine
     restart: unless-stopped
     volumes:
-      - redisdata:/data
+      - valkeydata:/data
 
   webserver:
     # Pinned for controlled upgrades. v3 has breaking changes, see
@@ -84,4 +84,4 @@ services:
     restart: unless-stopped
 
 volumes:
-  redisdata:
+  valkeydata:
