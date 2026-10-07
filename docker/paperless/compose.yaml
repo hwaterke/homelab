@@ -40,7 +40,7 @@ services:
   webserver:
     # Pinned for controlled upgrades. v3 has breaking changes, see
     # https://docs.paperless-ngx.com/migration-v3/
-    image: ghcr.io/paperless-ngx/paperless-ngx:3.1.0
+    image: ghcr.io/paperless-ngx/paperless-ngx:3.3.0
     restart: unless-stopped
     depends_on:
       - broker
@@ -69,7 +69,7 @@ services:
       PAPERLESS_OCR_LANGUAGES: nld
 
   gotenberg:
-    image: docker.io/gotenberg/gotenberg:8.34
+    image: docker.io/gotenberg/gotenberg:8.37
     restart: unless-stopped
 
     # The gotenberg chromium route is used to convert .eml files. We do not
