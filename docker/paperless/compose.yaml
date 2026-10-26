@@ -67,6 +67,18 @@ services:
       PAPERLESS_TIKA_ENDPOINT: http://tika:9998
       PAPERLESS_OCR_LANGUAGE: fra+eng+nld+deu
       PAPERLESS_OCR_LANGUAGES: nld
+      # AI stays off unless .env turns it on and names the model server.
+      PAPERLESS_AI_ENABLED: ${PAPERLESS_AI_ENABLED:-false}
+      PAPERLESS_AI_LLM_BACKEND: openai-like
+      PAPERLESS_AI_LLM_ENDPOINT: ${PAPERLESS_AI_LLM_ENDPOINT:-}
+      PAPERLESS_AI_LLM_MODEL: ${PAPERLESS_AI_LLM_MODEL:-}
+      PAPERLESS_AI_LLM_API_KEY: ${PAPERLESS_AI_LLM_API_KEY:-}
+      PAPERLESS_AI_LLM_EXTRA_PARAMS: ${PAPERLESS_AI_LLM_EXTRA_PARAMS:-}
+      # A local model reads a long document in about two minutes.
+      PAPERLESS_AI_LLM_REQUEST_TIMEOUT: 600
+      # Embeddings run inside this container, so the index does not depend on the model server being up.
+      PAPERLESS_AI_LLM_EMBEDDING_BACKEND: huggingface
+      PAPERLESS_AI_LLM_EMBEDDING_MODEL: intfloat/multilingual-e5-small
 
   gotenberg:
     image: docker.io/gotenberg/gotenberg:8.37
